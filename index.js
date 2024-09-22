@@ -17,16 +17,17 @@ const upload = multer({ storage: storage });
 
 // Criação da conexão ao banco de dados
 const mysqli = mysql2.createConnection({
-    host: process.env.MYSQL_HOST, // Atualizado para a variável correta
+    host: process.env.MYSQL_PUBLIC_URL || 'autorack.proxy.rlwy.net', // Usando o host público
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE
+    database: process.env.MYSQL_DATABASE,
+    port: process.env.MYSQL_PORT || 28097 // Usando a porta correta
 });
 
 // Verifica a conexão com o banco de dados
 mysqli.connect((err) => {
     if (err) {
-        console.error('Erro ao conectar ao MySQL:', err);
+        console.error('Erro ao conectar ao MySQL:', err.code, err.message); // Log detalhado
         return process.exit(1);
     }
     console.log('Conectado ao MySQL com sucesso!');
