@@ -7,33 +7,29 @@ const port = process.env.PORT || 3000;
 
 // Middleware para CORS
 app.use(cors({
-    origin: '*',  
-    methods: ['GET', 'POST'], 
+    origin: '*',
+    methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Criação do pool de conexões
-const mysqli = mysql2.createPool({ 
-    host: process.env.BD_HOST,
-    user: process.env.USER,
-    password: process.env.PASSWORD,
-    database: process.env.DATABASE,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+// Criação da conexão ao banco de dados
+const mysqli = mysql2.createConnection({
+    host: process.env.MYSQL_HOST, // Atualizado para a variável correta
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE
 });
 
 // Verifica a conexão com o banco de dados
-mysqli.getConnection((err, connection) => {
+mysqli.connect((err) => {
     if (err) {
         console.error('Erro ao conectar ao MySQL:', err);
         return process.exit(1);
     }
     console.log('Conectado ao MySQL com sucesso!');
-    connection.release(); // Libera a conexão de volta para o pool
 });
 
 app.use(express.json());
