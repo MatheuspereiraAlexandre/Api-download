@@ -5,7 +5,6 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware para CORS
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST'],
@@ -15,19 +14,17 @@ app.use(cors({
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Criação da conexão ao banco de dados
 const mysqli = mysql2.createConnection({
-    host: process.env.MYSQL_PUBLIC_URL || 'autorack.proxy.rlwy.net', // Usando o host público
+    host: process.env.MYSQL_PUBLIC_URL || 'autorack.proxy.rlwy.net',
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
-    port: process.env.MYSQL_PORT || 28097 // Usando a porta correta
+    port: process.env.MYSQL_PORT || 28097 
 });
 
-// Verifica a conexão com o banco de dados
 mysqli.connect((err) => {
     if (err) {
-        console.error('Erro ao conectar ao MySQL:', err.code, err.message); // Log detalhado
+        console.error('Erro ao conectar ao MySQL:', err.code, err.message);
         return process.exit(1);
     }
     console.log('Conectado ao MySQL com sucesso!');
@@ -36,13 +33,11 @@ mysqli.connect((err) => {
 app.use(express.json());
 app.use(express.static('public'));
 
-// Função utilitária para enviar respostas de erro
 const sendErrorResponse = (res, message, statusCode = 500) => {
     console.error(message);
     res.status(statusCode).json({ success: false, message });
 };
 
-// Endpoint para obter arquivos
 app.get('/arquivo', (req, res) => {
     const sql = 'SELECT id_arquivo, nome_arquivo, download_arquivo, tipo FROM arquivo';
     mysqli.query(sql, (err, result) => {
@@ -53,7 +48,6 @@ app.get('/arquivo', (req, res) => {
     });
 });
 
-// Endpoint para upload de arquivos
 app.post('/upload', upload.single('download_arquivo'), (req, res) => {
     const { nome_arquivo } = req.body; 
     const download_arquivo = req.file ? req.file.buffer : null; 
@@ -72,7 +66,12 @@ app.post('/upload', upload.single('download_arquivo'), (req, res) => {
     });
 });
 
-// Inicia o servidor
+app.get('/loading', (req, res) => {
+    setTimeout(() =>{
+        res.redirect('/')
+    }, 15000)
+})
+
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
 });
