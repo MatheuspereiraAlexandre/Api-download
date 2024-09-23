@@ -70,7 +70,30 @@ app.get('/loading', (req, res) => {
     setTimeout(() =>{
         res.redirect('/')
     }, 15000)
-})
+});
+
+app.get('/download/:id', (req, res) => {
+    const idArquivo = req.params.id;
+
+    const sql = 'SELECT nome_arquivo, download_arquivo, tipo FROM arquivo WHERE id_arquivo = ?';
+    mysqli.query(sql, [idArquivo], (err, result) => {
+        if (err || result.length === 0) {
+            return sendErrorResponse(res, 'Arquivo não encontrado ou erro ao buscar arquivo', 404);
+        }
+
+        const arquivo = result[0];
+        const nomeArquivo = arquivo.nome_arquivo;
+        const bufferArquivo = arquivo.download_arquivo;
+
+        res.set({
+            'Content-Type': arquivo.tipo || 'application/octet-stream',
+            'Content-Disposition': `attachment; filename="${nomeArquivo}"`,
+        });
+
+        res.send(bufferArquivo);
+    });
+});
+
 
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
