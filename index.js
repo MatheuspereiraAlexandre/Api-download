@@ -62,7 +62,7 @@ app.post('/upload', upload.single('download_arquivo'), (req, res) => {
         if (err) {
             return sendErrorResponse(res, 'Erro ao inserir dados: ' + err.message);
         }
-        res.redirect('/');
+        res.json({ success: true, message: 'Upload concluído' });
     });
 });
 
