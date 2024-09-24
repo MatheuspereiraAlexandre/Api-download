@@ -31,7 +31,6 @@ mysqli.connect((err) => {
 });
 
 app.use(express.json());
-app.use(express.static('public'));
 
 const sendErrorResponse = (res, message, statusCode = 500) => {
     console.error(message);
@@ -64,12 +63,6 @@ app.post('/upload', upload.single('download_arquivo'), (req, res) => {
         }
         res.json({ success: true, message: 'upload concluido' });
     });
-});
-
-app.get('/loading', (req, res) => {
-    setTimeout(() =>{
-        res.redirect('/')
-    }, 15000)
 });
 
 
