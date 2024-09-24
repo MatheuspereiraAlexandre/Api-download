@@ -24,10 +24,10 @@ const mysqli = mysql2.createConnection({
 
 mysqli.connect((err) => {
     if (err) {
-        console.error('Erro ao conectar ao MySQL:', err.code, err.message);
+        console.error('error ao conectar ao MySQL:', err.code, err.message);
         return process.exit(1);
     }
-    console.log('Conectado ao MySQL com sucesso!');
+    console.log('deu certo conectar ao MySQL com sucesso');
 });
 
 app.use(express.json());
@@ -42,7 +42,7 @@ app.get('/arquivo', (req, res) => {
     const sql = 'SELECT id_arquivo, nome_arquivo, download_arquivo, tipo FROM arquivo';
     mysqli.query(sql, (err, result) => {
         if (err) {
-            return sendErrorResponse(res, 'Erro ao consultar dados: ' + err.message);
+            return sendErrorResponse(res, 'erro ao consultar dados: ' + err.message);
         }
         res.json(result);
     });
@@ -54,15 +54,15 @@ app.post('/upload', upload.single('download_arquivo'), (req, res) => {
     const tipo = req.file ? req.file.mimetype : null; 
 
     if (!nome_arquivo || !download_arquivo) {
-        return sendErrorResponse(res, 'Nome do arquivo e arquivo são obrigatórios', 400);
+        return sendErrorResponse(res, 'nome do arquivo e arquivo sao obrigatórios', 400);
     }
 
     const sql = 'INSERT INTO arquivo (nome_arquivo, download_arquivo, tipo) VALUES (?, ?, ?)';
     mysqli.query(sql, [nome_arquivo, download_arquivo, tipo], (err, result) => { 
         if (err) {
-            return sendErrorResponse(res, 'Erro ao inserir dados: ' + err.message);
+            return sendErrorResponse(res, 'erro ao inserir dados: ' + err.message);
         }
-        res.json({ success: true, message: 'Upload concluído' });
+        res.json({ success: true, message: 'upload concluido' });
     });
 });
 
